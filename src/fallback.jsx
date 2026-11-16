@@ -1,7 +1,11 @@
+import '/src/styles/chrome.css';
+
+// light loading screen, shown only while a page's code is being loaded
 export default function Fallback() {
   return (
-    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-inherit">
-      <h1 className="text-2xl font-semibold text-gray-300">読み込み中...</h1>
+    <div className="chrome-fallback" role="status" aria-live="polite">
+      <div className="chrome-fallback-ring" />
+      <span>読み込み中...</span>
     </div>
   );
 }

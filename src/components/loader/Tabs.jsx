@@ -1,83 +1,87 @@
 import loaderStore from '/src/utils/hooks/loader/useLoaderStore';
-import { Globe, X, Plus, Loader } from 'lucide-react';
-import { useOptions } from '/src/utils/optionsContext'
+import { Globe, X, Plus } from 'lucide-react';
 import clsx from 'clsx';
+import '/src/styles/chrome.css';
+
+const MAX_TABS = 20;
 
 const TabBar = () => {
-  const { tabs, addTab, removeTab, setActive, showTabs, setLastActive, showUI } = loaderStore();
-  const { options } = useOptions();
+  const { tabs, addTab, removeTab, setActive, setLastActive, showUI, newTabId } = loaderStore();
 
   return (
-    <div
-      className={clsx(
-        'h-10 items-end overflow-hidden gap-0.5 px-2 pt-1.5',
-        showTabs && showUI ? 'flex' : 'hidden',
-      )}
-      style={{ backgroundColor: options.tabBarColor || '#070e15' }}
-    >
-      {tabs.map(({ title, id, active, isLoading, url }) => {
-        const showGlobe = url === 'tabs://new' || !isLoading;
-        return (
-          <div
-            className={clsx(
-              'flex flex-1 flex-shrink px-2.5 h-full min-w-[60px] max-w-[200px]',
-              'items-center rounded-t-lg duration-150 cursor-default',
-              !active && 'hover:bg-[#ffffff0f]',
-            )}
-            onClick={() => setActive(id)}
-            key={id}
-            style={{
-              backgroundColor: active ? options.barColor || '#09121e' : '',
-            }}
-          >
-            {showGlobe ? (
-              <Globe size={15} className="flex-shrink-0" />
-            ) : (
-              <Loader size={15} className="flex-shrink-0 animate-spin" />
-            )}
-            <span className="truncate text-[0.79rem] ml-1.5 min-w-0">
-              {url === 'tabs://new' ? '新しいタブ' : title}
-            </span>
-            <X
-              size={13}
+    <div className={clsx('chrome-strip', showUI ? 'flex' : 'hidden')}>
+      <div className="chrome-tabs">
+        {tabs.map(({ title, id, active, isLoading, url }) => {
+          const isNewPage = url === 'tabs://new';
+          const showSpinner = isLoading && !isNewPage;
+          const isEntering = id === newTabId;
+
+          return (
+            <div
+              key={id}
+              role="tab"
+              aria-selected={active}
               className={clsx(
-                'ml-auto flex-shrink-0 duration-200 rounded-sm',
-                tabs.length < 2 ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-[#ffffff1e]',
+                'chrome-tab',
+                active && 'is-active',
+                isEntering && 'is-entering',
               )}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (tabs.length > 1) {
+              onClick={() => setActive(id)}
+              onMouseDown={(e) => {
+                // middle click closes the tab, like Chrome
+                if (e.button === 1 && tabs.length > 1) {
+                  e.preventDefault();
                   active && setLastActive(id);
                   removeTab(id);
                 }
               }}
-            />
-          </div>
-        );
-      })}
+            >
+              {showSpinner ? (
+                <span className="chrome-spinner" />
+              ) : (
+                <Globe size={14} className="chrome-tab-icon" />
+              )}
+
+              <span className="chrome-tab-title">{isNewPage ? '新しいタブ' : title}</span>
+
+              <span
+                role="button"
+                aria-label="タブを閉じる"
+                className={clsx('chrome-tab-close', tabs.length < 2 && 'is-disabled')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (tabs.length > 1) {
+                    active && setLastActive(id);
+                    removeTab(id);
+                  }
+                }}
+              >
+                <X size={13} />
+              </span>
+            </div>
+          );
+        })}
+      </div>
 
       <button
-        disabled={tabs.length >= 20}
-        className={clsx(
-          'flex-none mx-1 mb-1 w-6 h-6 self-center',
-          'flex items-center justify-center',
-          'duration-100 rounded-full',
-          options.type != 'light' ? 'hover:bg-[#ffffff1e]' : 'hover:bg-[#a7a7a7]',
-          tabs.length >= 20 ? 'cursor-not-allowed opacity-50 hover:bg-transparent' : '',
-        )}
+        type="button"
+        aria-label="新しいタブ"
+        title="新しいタブ"
+        disabled={tabs.length >= MAX_TABS}
+        className="chrome-new-tab"
         onClick={() => {
-          if (tabs.length < 20) {
-            let uuid = crypto.randomUUID();
+          if (tabs.length < MAX_TABS) {
+            const uuid = crypto.randomUUID();
             addTab({
               title: '新しいタブ',
               id: uuid,
-              url: "tabs://new"
+              url: 'tabs://new',
             });
             setActive(uuid);
           }
         }}
       >
-        <Plus size={15} />
+        <Plus size={16} />
       </button>
     </div>
   );

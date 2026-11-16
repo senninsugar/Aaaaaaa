@@ -15,17 +15,13 @@ import loaderStore from '/src/utils/hooks/loader/useLoaderStore';
 import { process, openEmbed } from '/src/utils/hooks/loader/utils';
 import { useOptions } from '/src/utils/optionsContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import '/src/styles/chrome.css';
 
 const Action = ({ Icon, size = 15, action = () => alert('まだ実装されていません'), disabled = false }) => {
-  const { options } = useOptions();
   return (
     <button
-      className={clsx(
-        'flex justify-center items-center',
-        'h-7 w-7 rounded-full',
-        disabled ? 'cursor-not-allowed opacity-70' : '',
-        options.type != 'light' ? 'hover:bg-[#fff3]' : 'hover:bg-[#97979773]',
-      )}
+      type="button"
+      className={clsx('chrome-action', disabled && 'is-disabled')}
       onClick={(e) => {
         if (!disabled) {
           action(e);
@@ -99,7 +95,9 @@ const Omnibox = () => {
   }, [activeTab]);
 
   return (
-    <div className={clsx("h-10 flex items-center overflow-hidden gap-1 px-2", showUI ? '' : 'hidden')}>
+    <div
+      className={clsx('chrome-toolbar h-10 flex items-center overflow-hidden gap-1 px-2', showUI ? '' : 'hidden')}
+    >
       <Action
         Icon={ArrowLeft}
         size="17"
@@ -113,16 +111,7 @@ const Omnibox = () => {
       {/** ^^ callback used if going back to a new tab only */}
       <Action Icon={ArrowRight} size="17" action={() => activeTab && goForward(activeTab.id)} />
       <Action Icon={RotateCw} size="16" action={() => activeTab && refreshTab(activeTab.id)} />
-      <div
-        className={clsx(
-          ' h-[calc(100%-8px)] w-full',
-          'rounded-full border flex items-center px-3 ml-2 mr-2',
-        )}
-        style={{
-          backgroundColor: options.omninputColor || '#06080d8f',
-          borderColor: options.type == 'light' ? '#a1a1a173' : "#efefef30",
-        }}
-      >
+      <div className="chrome-omnibox">
         <Icon size="15" />
         <input
           className="h-full w-full outline-0 text-[0.8rem] ml-2.5 bg-transparent"

@@ -13,7 +13,7 @@ export default function Loader({ config = {} }) {
   const tabs = loaderStore((state) => state.tabs);
   const updateUrl = loaderStore((state) => state.updateUrl);
   const barStyle = {
-    backgroundColor: options.barColor || '#09121e',
+    backgroundColor: '#ffffff',
   };
 
   useEffect(() => {
@@ -28,15 +28,16 @@ export default function Loader({ config = {} }) {
   }, [url, tabs, updateUrl, options.prType]);
 
   useEffect(() => {
-    loaderStore.getState().clearStore({ showTb: options.showTb ?? true });
+    // tab strip is always shown when the browser page is opened
+    loaderStore.getState().clearStore({ showTb: true });
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-screen">
+    <div className="flex flex-col w-full h-screen bg-white">
       {ui && (
         <>
-          <div 
-            className="flex flex-col w-full" 
+          <div
+            className="flex flex-col w-full"
             style={barStyle}
             onClick={() => loaderStore.getState().showMenu && loaderStore.getState().toggleMenu()}
           >

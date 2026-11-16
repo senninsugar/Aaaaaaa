@@ -20,6 +20,7 @@ const store = create((set) => ({
   activeFrameRef: null,
   showUI: true,
   zoomLevels: {},
+  newTabId: null,
 
   toggleUI: () => set((state) => ({ showUI: !state.showUI })),
   setZoom: (tabId, zoom, frameRef) => {
@@ -51,6 +52,7 @@ const store = create((set) => ({
   setFrameRefs: (refs) => set({ frameRefs: refs }),
   addTab: (tab) =>
     set((state) => ({
+      newTabId: tab.id,
       tabs: [
         ...state.tabs,
         {

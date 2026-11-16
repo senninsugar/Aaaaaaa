@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Plus, CircleX, History, Star, Maximize, EyeOff, Code, Home, Settings,
 } from 'lucide-react';
-import { useOptions } from '/src/utils/optionsContext';
 import loaderStore from '/src/utils/hooks/loader/useLoaderStore';
+import '/src/styles/chrome.css';
 import Zoom from './menu/Zoom';
 import Bookmarks from '../Bookmarks';
 import HistoryPanel from '../HistoryPanel';
@@ -53,7 +53,6 @@ export default function Menu() {
     activeFrameRef,
     toggleUI,
   } = loaderStore();
-  const { options } = useOptions();
   const nav = useNavigate();
   const [showBookmarks, setShowBm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -126,18 +125,15 @@ export default function Menu() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [newTab, clearTabs, fs, activeFrameRef, toggleUI, togEruda]);
 
-  const light = options.type === 'light';
-
   const cnt = clsx(
-    'absolute right-2 w-72 rounded-xl shadow-2xl overflow-hidden text-sm z-50 p-1.5',
-    'border transition-all duration-200 origin-top-right',
+    'chrome-menu absolute right-2 w-72 rounded-xl overflow-hidden text-sm z-50 p-1.5',
+    'transition-all duration-200 origin-top-right',
     showTabs ? 'mt-21' : 'mt-11',
     showMenu ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-95 opacity-0 pointer-events-none',
   );
 
   const item = clsx(
-    'w-full flex items-center gap-3 text-left text-[0.82rem] px-3 py-2 rounded-md focus:outline-none',
-    light ? 'hover:bg-gray-100' : 'hover:bg-[#ffffff12]',
+    'chrome-menu-item w-full flex items-center gap-3 text-left text-[0.82rem] px-3 py-2 rounded-md focus:outline-none',
   );
 
   return (
@@ -145,13 +141,7 @@ export default function Menu() {
       <Bookmarks isOpen={showBookmarks} onClose={() => setShowBm(false)} inLoader={true} />
       <HistoryPanel isOpen={showHistory} onClose={() => setShowHistory(false)} />
       <SettingsPanel isOpen={showSettings} onClose={() => setShowSettings(false)} />
-      <div
-        className={cnt}
-        style={{
-          backgroundColor: options.menuColor || '#1a252f',
-          borderColor: light ? '#e5e7eb' : '#374151',
-        }}
-      >
+      <div className={cnt}>
         {items.map(
           ({ name, shortcut = null, divider = null, fn = null, disabled = false, isComponent = false, icon: Icon }, id) => (
             <div key={id} className={clsx(disabled ? 'opacity-50 pointer-events-none' : '')}>
@@ -170,12 +160,10 @@ export default function Menu() {
                 >
                   {Icon && <Icon size={15} className="shrink-0 opacity-80" />}
                   <span className="flex-1">{name}</span>
-                  {shortcut && <span className="text-[0.7rem] opacity-50">{shortcut}</span>}
+                  {shortcut && <span className="chrome-menu-shortcut text-[0.7rem]">{shortcut}</span>}
                 </button>
               )}
-              {divider && (
-                <hr className={clsx('my-1 border-t', light ? 'border-gray-200' : 'border-gray-700')} />
-              )}
+              {divider && <hr className="chrome-menu-divider my-1 border-t" />}
             </div>
           ),
         )}

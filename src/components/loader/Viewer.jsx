@@ -2,9 +2,28 @@ import clsx from 'clsx';
 import loaderStore from '/src/utils/hooks/loader/useLoaderStore';
 import { useOptions } from '/src/utils/optionsContext';
 import { useRef, useEffect } from 'react';
-import { Loader } from 'lucide-react';
+import '/src/styles/chrome.css';
 
 import NewTab from './NewTab';
+
+// light loading overlay: only visible while the tab's page is loading
+const LoadingOverlay = ({ tabId, loading }) => {
+  const setLoading = loaderStore((state) => state.setLoading);
+
+  useEffect(() => {
+    if (!loading) return;
+    // safety net so the overlay can never get stuck if the load event never fires
+    const timer = setTimeout(() => setLoading(tabId, false), 20000);
+    return () => clearTimeout(timer);
+  }, [loading, tabId, setLoading]);
+
+  return (
+    <div className={clsx('chrome-loading', !loading && 'is-done')} aria-hidden={!loading}>
+      <div className="chrome-loading-bar" />
+      <div className="chrome-loading-ring" />
+    </div>
+  );
+};
 
 const Viewer = ({ conf = {} }) => {
   const tabs = loaderStore((state) => state.tabs);
@@ -153,7 +172,7 @@ const Viewer = ({ conf = {} }) => {
 
   return (
     <div className="relative w-full h-full">
-      {tabs.map(({ id, url, active }) => {
+      {tabs.map(({ id, url, active, isLoading }) => {
         if (url === 'tabs://new') return null;
         return (
           <div
@@ -163,20 +182,14 @@ const Viewer = ({ conf = {} }) => {
               active ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none',
             )}
           >
-            {active && (
-              <div
-                className="absolute inset-0 w-full h-full flex items-center justify-center -z-20"
-                style={{ backgroundColor: options.tabBarColor || '#070e15' }}
-              >
-                <Loader size={32} className="animate-spin" />
-              </div>
-            )}
             <iframe
               ref={(el) => (frameRefs.current[id] = el)}
               src={url}
               style={{ display: 'block', width: '100%', height: '100%' }}
               className="absolute inset-0 w-full h-full transition-opacity duration-200"
             />
+
+            {active && <LoadingOverlay tabId={id} loading={!!isLoading} />}
 
             {/*transparent overlay for when click on content */}
             {showMenu && (
