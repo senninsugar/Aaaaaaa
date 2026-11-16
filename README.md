@@ -1,46 +1,105 @@
-# rammerhead
+<div align="center">
+  
+  <img src="https://github.com/DogeNetwork/dogeub/blob/main/public/logo.svg" width="322" />
+  <br />
 
-> proxy based on testcafe-hammerhead (password is `sharkie4life`)
+  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I3I81MF4CH) ![](https://dcbadge.limes.pink/api/server/https://discord.gg/unblocking?compact=true)
 
-Demo link: https://demo-opensource.rammerhead.org
+  
+</div>
 
-Polished closed-source-for-now browser version: https://browser.rammerhead.org (more links by awesome community members in the discord server at the end of readme)
+# 
 
-
-## Supporting me and contributing
-
-Server infrastructure costs money and developing this project consumes a lot of my time, so I would appreciate it greatly if you become a Patreon member: https://www.patreon.com/rammerhead
+A versatile, "internet hub"; The point of this project is to eliminate the need to search multiple websites for different things by packing together tools, apps, as well as entertainment and private browsing, all in one place. This is particularly useful for people who are lazy and want a "hub" that includes everything that they need to enjoy the internet.
 
 
-## Who is this package for
+Many of our tools, apps, entertainment, etc. is requested through our Discord community or added through pull requests. We recommend making PRs to help out and contribute!
 
-Package is for those who want a fully-configurable proxy that works on many sites
 
-## Effectiveness of proxy
+> [!CAUTION]
+> Although this is an "internet hub", we do **not** include illegal, piracy, or copyright-infringing tools or apps.
 
-This proxy supports proxying
-- basically everything except google logins
+> ⭐ Star this repository if you are forking it, or find it useful!
 
-## Features of proxy
+---
 
-The proxy allows users to create a "session". When they access their session, their localStorage and cookies will be synced with rammerhead. This allows for accurately mocking cookied requests and conveniently save their logins even if they switch devices. This also enables users to configure a custom HTTP proxy server for rammerhead to connect to for the session.
+### Development & Building
 
-## Installing and running
+dogeub can be easily deployed as a web application. Use the commands below to run it for production, or for developing.
 
-Rammerhead recommends you to have at least **node v16** to be installed. Once you installed nodejs, clone the repo, then run `npm install` and `npm run build`.
+> [!WARNING]
+> This project will **not work on Vercel**. dogeub runs a custom Node server while Vercel only supports serverless functions & does not allow persistent Node servers.
 
-After, configure your settings in [src/config.js](src/config.js). If you wish to consistently pull updates from this repo without the hassle of merging, create `config.js` in the root folder so they override the configs in `src/`.
+#### Production:
+```bash
+git clone https://github.com/xorynix/dogeub.git
+cd dogeub
+npm i
+npm run build
+node server.js
+```
 
-Finally run the following to start rammerhead: `node src/server.js`
+#### Development:
 
-## Browser UI
+```bash
+git clone https://github.com/xorynix/dogeub.git
+cd dogeub
+npm i
+npm run dev
+```
+---
 
-Opening the root page (`http://localhost:8080/`) shows a browser-style interface: tabs, back/forward/reload, an address bar that accepts either a URL or a search query, a new tab page with shortcuts, and a settings panel for search engine, HTTP proxy, URL shuffling, and session reset. Open tabs are restored after a reload. The original session manager remains available at `/classic.html`.
+#### Deploying with Docker:
 
-Keyboard shortcuts: `Ctrl+T` new tab, `Ctrl+W` close tab, `Ctrl+L` focus address bar, `Ctrl+R` / `F5` reload, `Alt+Left` / `Alt+Right` back / forward, `Ctrl+Tab` next tab. These work when the focus is on the browser chrome, not inside a loaded page.
+```bash
+docker run -d \
+  --name dogeub \
+  --restart unless-stopped \
+  -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e PORT=3000 \
+  ghcr.io/xorynix/dogeub:latest
+```
 
-The UI is built from plain files in `public/browser/` (ES modules, no build step). Saved passwords are stored in the browser's localStorage.
+> [!NOTE]
+> If accessing over a network instead of localhost, you will need to provide a valid SSL certificate (e.g., using a reverse proxy like Nginx or Caddy). This is required for the built-in service worker to function properly.
 
-## Discord server
+---
 
-For any user-help non-issue related questions, especially pertaining to Rammerhead Browser, please ask them here: [Rammerhead Support Server](https://discord.gg/VNT4E7gN5Y).
+### Contributors / Developers
+
+[![Contributors](https://contrib.rocks/image?repo=xorynix/dogeub)](https://github.com/xorynix/dogeub/graphs/contributors)
+
+> Want to be on this list? Contribute to this project!
+
+---
+
+
+
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=xorynix%2Fdogeub&type=timeline&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=xorynix/dogeub&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=xorynix/dogeub&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=xorynix/dogeub&type=timeline&legend=top-left" />
+ </picture>
+</a>
+
+
+
+
+Thanks to these libraries for making the project possible:
+
+- [MercuryWorkshop/wisp-server-node](https://github.com/MercuryWorkshop/wisp-server-node)
+- [MercuryWorkshop/scramjet](https://github.com/MercuryWorkshop/scramjet)
+- [titaniumnetwork-dev/Ultraviolet](https://github.com/titaniumnetwork-dev/Ultraviolet)
+- [lucide-icons/lucide](https://github.com/lucide-icons/lucide)
+- [pmndrs/zustand](https://github.com/pmndrs/zustand)
+- [Stuk/jszip](https://github.com/Stuk/jszip)
+  
+## License
+
+This project is licensed under the **AGPLv3** license.
+See the [LICENSE](LICENSE) file for more details.

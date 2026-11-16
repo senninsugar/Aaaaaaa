@@ -1,0 +1,9 @@
+ services:
+  - type: web
+    name: educational-website
+    env: node
+    plan: free
+    startCommand: npm install && npm run build && node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

@@ -1,25 +1,30 @@
-node_modules/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# don't commit generated builds or env files
-src/client/*.min.*
-src/client/hammerhead.js
-src/client/worker-hammerhead.js
-src/client/transport-worker.js
+node_modules
+dist
+dist-ssr
+*.local
+
+# fowntain's Python dev utils
+tools
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 .env
-
-# don't commit session, cache, and cf token data
-sessions/*
-cache-js/*
-cf-clearances/*
-
-# but commit the empty folders
-!sessions/.gitkeep
-!cache-js/.gitkeep
-!cf-clearances/.gitkeep
-
-# ignore any custom configurations
-config.js
-
-# local scratch scripts and build tarballs
-test.sh
-*.tar.bz2
+package-lock.json
