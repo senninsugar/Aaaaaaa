@@ -111,6 +111,12 @@ const store = create((set) => ({
       tabs: state.tabs.map((tab) => (tab.id === tabId ? { ...tab, title } : tab)),
     }));
   },
+  updateFavicon: (tabId, favicon) =>
+    set((state) => ({
+      tabs: state.tabs.map((tab) =>
+        tab.id === tabId && tab.favicon !== favicon ? { ...tab, favicon } : tab,
+      ),
+    })),
   setLoading: (tabId, isLoading) =>
     set((state) => ({
       tabs: state.tabs.map((tab) => (tab.id === tabId ? { ...tab, isLoading } : tab)),

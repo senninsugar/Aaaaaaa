@@ -1,8 +1,7 @@
 import clsx from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  Plus, CircleX, History, Star, Maximize, EyeOff, Code, Home, Settings,
+  Plus, CircleX, History, Star, Maximize, EyeOff, Code, Settings,
 } from 'lucide-react';
 import loaderStore from '/src/utils/hooks/loader/useLoaderStore';
 import '/src/styles/chrome.css';
@@ -53,7 +52,6 @@ export default function Menu() {
     activeFrameRef,
     toggleUI,
   } = loaderStore();
-  const nav = useNavigate();
   const [showBookmarks, setShowBm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -96,7 +94,6 @@ export default function Menu() {
       divider: true,
     },
     { name: '設定', shortcut: 'Alt + ,', icon: Settings, fn: () => setShowSettings(true) },
-    { name: 'ホームに戻る', icon: Home, fn: () => nav('/') },
   ];
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useOptions } from '../utils/optionsContext';
+import '../styles/chrome.css';
 import loaderStore from '../utils/hooks/loader/useLoaderStore';
 import { process } from '../utils/hooks/loader/utils';
 
@@ -110,102 +111,73 @@ const Bookmarks = ({ isOpen, onClose, inLoader = false }) => {
   const fixUrl = u => (/^(https?:)?\/\//.test(u) ? u : `https://${u}`);
 
   if (!render) return null;
-  const light = o.type === 'light';
 
   return createPortal(
     <div
       className={clsx(
-        'fixed inset-0 z-[9999] flex items-center justify-center p-4 transition-opacity',
+        'cm-backdrop flex items-center justify-center p-4 transition-opacity duration-200',
         anim ? 'opacity-100' : 'opacity-0',
       )}
+      onClick={onClose}
     >
-      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-
       <div
         className={clsx(
-          'relative w-full max-w-2xl max-h-[80vh] rounded-lg border shadow-lg overflow-hidden transition-all',
+          'cm-dialog w-full max-w-2xl max-h-[80vh] transition-all duration-200',
           anim ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
         )}
-        style={{ backgroundColor: o.menuColor || '#1a252f' }}
+        onClick={e => e.stopPropagation()}
       >
-        <div
-          className="flex items-center justify-between px-4 py-3 border-b"
-          style={{ borderColor: light ? '#e5e7eb' : '#374151' }}
-        >
+        <div className="cm-header">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-medium">
+            <h2 className="cm-title">
               {showForm ? (editId ? 'ブックマークを編集' : 'ブックマークを作成') : 'ブックマーク'}
             </h2>
             {!showForm && (
-              <button
-                onClick={() => setShowForm(true)}
-                className={clsx('p-1 rounded-md', light ? 'hover:bg-gray-100' : 'hover:bg-[#ffffff0c]')}
-              >
+              <button onClick={() => setShowForm(true)} className="cm-icon-btn" aria-label="追加">
                 <Plus size={18} />
               </button>
             )}
           </div>
-          <button
-            onClick={onClose}
-            className={clsx('p-1 rounded-md', light ? 'hover:bg-gray-100' : 'hover:bg-[#ffffff0c]')}
-          >
+          <button onClick={onClose} className="cm-icon-btn" aria-label="閉じる">
             <X size={20} />
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto max-h-[calc(80vh-4rem)]">
+        <div className="cm-scroll px-5 pb-5 max-h-[calc(80vh-4rem)]">
           {showForm ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {[
                 ['名前', nm, setNm, PenLine],
                 ['URL', url, setUrl, Globe],
-                ['Bookmark Icon (URL)', ico, setIco, Image],
+                ['アイコン URL（任意）', ico, setIco, Image],
               ].map(([ph, v, s, I], i) => (
-                <div
-                  key={i}
-                  className={clsx(
-                    'flex items-center gap-2 px-3 rounded-md border',
-                    light ? 'bg-gray-50 border-gray-300' : 'bg-[#ffffff0c] border-gray-700',
-                  )}
-                >
-                  <I size={16} />
-                  <input
-                    value={v}
-                    onChange={e => s(e.target.value)}
-                    placeholder={ph}
-                    className="w-full py-2 text-sm bg-transparent outline-none"
-                  />
+                <div key={i}>
+                  <label className="cm-label">{ph}</label>
+                  <div className="cm-field">
+                    <I size={16} />
+                    <input value={v} onChange={e => s(e.target.value)} placeholder={ph} />
+                  </div>
                 </div>
               ))}
 
-              <div className="flex gap-2">
+              <div className="flex justify-end gap-2 pt-2">
+                <button onClick={reset} className="cm-text-btn">
+                  キャンセル
+                </button>
                 <button
                   onClick={editId ? update : add}
                   disabled={!url.trim()}
-                  className={clsx(
-                    'flex-1 px-3 py-2 text-sm rounded-md flex items-center justify-center gap-2',
-                    light ? 'bg-gray-200 hover:bg-gray-300' : 'bg-[#ffffff0c] hover:bg-[#ffffff15]',
-                    !url.trim() && 'opacity-50 cursor-not-allowed',
-                  )}
+                  className="cm-filled-btn flex items-center gap-2"
                 >
                   {editId ? <Check size={16} /> : <Plus size={16} />}
-                  {editId ? '変更を保存' : 'ブックマークを追加'}
-                </button>
-                <button
-                  onClick={reset}
-                  className={clsx(
-                    'px-3 py-2 text-sm rounded-md',
-                    light ? 'bg-gray-200 hover:bg-gray-300' : 'bg-[#ffffff0c] hover:bg-[#ffffff15]',
-                  )}
-                >
-                  キャンセル
+                  {editId ? '変更を保存' : '追加'}
                 </button>
               </div>
             </div>
           ) : bms.length === 0 ? (
-            <p className="text-sm text-gray-500">ブックマークはまだありません。</p>
+            <p className="cm-empty">ブックマークはまだありません。</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {bms.map(b => (
                 <div
                   key={b.id}
@@ -224,45 +196,47 @@ const Bookmarks = ({ isOpen, onClose, inLoader = false }) => {
                       nav('/search', { state: { url: fixUrl(b.url) } });
                     }
                   }}
-                  className={clsx(
-                    'flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer',
-                    light ? 'hover:bg-gray-100' : 'hover:bg-[#ffffff0c]',
-                  )}
+                  className="cm-row"
                 >
-                  <div className="w-5 h-5 relative flex-shrink-0">
+                  <div className="w-4 h-4 relative flex-shrink-0">
                     {b.icon && !badIcons.has(b.id) ? (
                       <>
                         {!loadedIcons.has(b.id) && (
-                          <div className="absolute inset-0 bg-gray-600 rounded animate-pulse" />
+                          <div className="absolute inset-0 rounded bg-[#e8eaed] animate-pulse" />
                         )}
                         <img
                           src={b.icon}
-                          className="w-5 h-5 relative"
+                          className="w-4 h-4 relative"
+                          alt=""
                           onLoad={() => setLoadedIcons(p => new Set(p).add(b.id))}
                           onError={() => setBadIcons(p => new Set(p).add(b.id))}
                         />
                       </>
                     ) : (
-                      <Globe size={20} />
+                      <Globe size={16} style={{ color: '#5f6368' }} />
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{b.name}</div>
-                    <div className="text-xs text-gray-500 truncate">{b.url}</div>
+                    <div className="text-sm font-medium truncate" style={{ color: '#202124' }}>
+                      {b.name}
+                    </div>
+                    <div className="text-xs truncate cm-row-sub">{b.url}</div>
                   </div>
 
                   <button
                     onClick={e => { e.stopPropagation(); edit(b); }}
-                    className={clsx('p-1.5 rounded-md', light ? 'hover:bg-gray-200' : 'hover:bg-[#ffffff15]')}
+                    className="cm-icon-btn"
+                    aria-label="編集"
                   >
-                    <Pencil size={16} />
+                    <Pencil size={15} />
                   </button>
                   <button
                     onClick={e => { e.stopPropagation(); del(b.id); }}
-                    className={clsx('p-1.5 rounded-md', light ? 'hover:bg-gray-200' : 'hover:bg-[#ffffff15]')}
+                    className="cm-icon-btn"
+                    aria-label="削除"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               ))}

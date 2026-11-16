@@ -5,6 +5,10 @@ import { Plus, Bolt, Globe, Pencil, Trash2, CircleX } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import LinkDialog from './NewQuickLink';
 import EditLinkDialog from './EditQuickLink';
+import '/src/styles/chrome.css';
+
+// removed from the home page; also filtered out of links saved before this change
+const REMOVED_LINKS = ['https://cineby.gd'];
 
 const QuickLinks = ({ cls, nav = true, navigating }) => {
   const { options, updateOption } = useOptions();
@@ -17,14 +21,14 @@ const QuickLinks = ({ cls, nav = true, navigating }) => {
 
   const defaultLinks = [
     { link: 'https://google.com', icon: 'https://google.com/favicon.ico', name: 'Google' },
-    { link: 'https://cineby.gd', icon: '/assets/img/fyhn.ico', name: '映画' },
     { link: 'https://discord.com', icon: '/assets/img/dsci.ico', name: 'Discord' },
     { link: 'https://github.com', icon: '/assets/img/icogh.ico', name: 'GitHub' },
   ];
 
   const [quickLinks, setQuickLinks] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('options'))?.quickLinks || defaultLinks;
+      const saved = JSON.parse(localStorage.getItem('options'))?.quickLinks || defaultLinks;
+      return saved.filter((l) => !REMOVED_LINKS.includes(l.link));
     } catch {
       return defaultLinks;
     }
@@ -66,11 +70,10 @@ const QuickLinks = ({ cls, nav = true, navigating }) => {
   }, [quickLinks]);
 
   const linkItem = clsx(
-    'flex flex-col items-center justify-center relative group w-20 h-[5.5rem] rounded-md border-transparent cursor-pointer duration-200 ease-in-out',
-    options.type === 'dark' ? 'border hover:border-[#ffffff1c]' : 'border-2 hover:border-[#4f4f4f1c]',
-    'hover:backdrop-blur'
+    'flex flex-col items-center justify-center relative group w-20 h-[5.5rem] rounded-xl border border-transparent cursor-pointer duration-200 ease-out text-[#202124]',
+    'hover:bg-[#f1f3f4] hover:border-[#e8eaed]',
   );
-  const linkLogo = 'w-[2.5rem] h-[2.5rem] flex items-center justify-center rounded-full bg-[#6d6d6d73]';
+  const linkLogo = 'w-[2.5rem] h-[2.5rem] flex items-center justify-center rounded-full bg-[#f1f3f4] transition-transform duration-200 ease-out group-hover:scale-105';
 
   return (
     <div className={clsx('flex flex-wrap justify-center gap-4', cls || 'w-full max-w-[40rem] mx-auto mt-[16rem]')}>
@@ -90,19 +93,18 @@ const QuickLinks = ({ cls, nav = true, navigating }) => {
             {shiftHeld ? <CircleX size="16" className="opacity-70 text-red-500" /> : <Bolt size="16" className="opacity-50" />}
             {menuOpen === i && (
               <div
-                className="absolute top-5 right-0 rounded-md shadow-lg border border-white/10 py-1 w-[101px] z-50"
-                style={{ backgroundColor: options.quickModalBgColor || '#252f3e' }}
+                className="chrome-menu chrome-menu-in absolute top-5 right-0 rounded-lg py-1 w-[120px] z-50 text-[#202124]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
                   onClick={() => setDialog({ add: false, edit: true, index: i }) || setMenuOpen(null)}
-                  className="w-full px-3 py-1.5 text-[0.74rem] flex items-center gap-2 hover:bg-white/10 duration-150 text-left"
+                  className="chrome-menu-item w-full px-3 py-2 text-[0.78rem] flex items-center gap-2 text-left"
                 >
-                  <Pencil size="14" /> 編集
+                  <Pencil size="14" className="opacity-70" /> 編集
                 </button>
                 <button
                   onClick={() => setQuickLinks(quickLinks.filter((_, j) => j !== i)) || setMenuOpen(null)}
-                  className="w-full px-3 py-1.5 text-[0.74rem] flex items-center gap-2 hover:bg-white/10 duration-150 text-left text-red-400"
+                  className="chrome-menu-item w-full px-3 py-2 text-[0.78rem] flex items-center gap-2 text-left text-[#d93025]"
                 >
                   <Trash2 size="14" /> 削除
                 </button>
@@ -124,7 +126,7 @@ const QuickLinks = ({ cls, nav = true, navigating }) => {
               />
             )}
           </div>
-          <div className="mt-3 text-sm font-medium text-center w-full px-1 overflow-hidden whitespace-nowrap text-ellipsis">
+          <div className="mt-3 text-sm font-medium text-center w-full px-1 overflow-hidden whitespace-nowrap text-ellipsis text-[#202124]">
             {link.name}
           </div>
         </div>

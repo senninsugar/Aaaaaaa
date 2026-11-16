@@ -1,5 +1,4 @@
 import Search from '../components/SearchContainer';
-import Footer from '../components/Footer';
 import QuickLinks from '../components/QuickLinks';
 import { memo } from 'react';
 
@@ -8,7 +7,6 @@ const Home = memo(() => {
     <div className="relative flow-root min-h-screen bg-white">
       <Search light />
       <QuickLinks />
-      <Footer />
     </div>
   );
 });

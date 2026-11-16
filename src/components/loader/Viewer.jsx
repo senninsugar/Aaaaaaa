@@ -30,11 +30,13 @@ const Viewer = ({ conf = {} }) => {
   const updateUrl = loaderStore((state) => state.updateUrl);
   const updateTitle = loaderStore((state) => state.updateTitle);
   const setLoading = loaderStore((state) => state.setLoading);
+  const updateFavicon = loaderStore((state) => state.updateFavicon);
   const setFrameRefs = loaderStore((state) => state.setFrameRefs);
   const { iframeUrls, setIframeUrl, showMenu, toggleMenu } = loaderStore();
   const frameRefs = useRef({});
   const prevURL = useRef({});
   const prevTitle = useRef({});
+  const prevFavicon = useRef({});
   const { options } = useOptions();
   const updateActiveFrameRef = loaderStore((state) => state.updateActiveFrameRef);
   const activeFrameRef = loaderStore((state) => state.activeFrameRef);
@@ -121,6 +123,13 @@ const Viewer = ({ conf = {} }) => {
             prevTitle.current[tab.id] = curTTL;
             updateTitle(tab.id, curTTL);
           }
+          // favicon: the page's own <link rel="icon">, resolved to an absolute URL
+          const iconEl = d?.querySelector('link[rel~="icon"][href]');
+          const icon = iconEl ? iconEl.href : null;
+          if (icon !== prevFavicon.current[tab.id]) {
+            prevFavicon.current[tab.id] = icon;
+            updateFavicon(tab.id, icon);
+          }
         } catch (e) {}
       });
     }, 50);
@@ -131,7 +140,7 @@ const Viewer = ({ conf = {} }) => {
       });
       clearInterval(interval);
     };
-  }, [tabs, setLoading, updateTitle, setIframeUrl, enableAlerts]);
+  }, [tabs, setLoading, updateTitle, updateFavicon, setIframeUrl, enableAlerts]);
 
   useEffect(() => {
     const interval = setInterval(() => {

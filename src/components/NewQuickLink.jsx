@@ -1,29 +1,25 @@
-import clsx from 'clsx';
 import { Dialog, DialogPanel, DialogTitle, Button, Input, Label, Field } from '@headlessui/react';
-import { useOptions } from '/src/utils/optionsContext';
 import { useState } from 'react';
+import '/src/styles/chrome.css';
 
 const FieldOption = ({ name, type, state }) => {
-  const { options } = useOptions();
   const [form, setForm] = state;
 
   return (
     <Field>
-      <Label className="text-[0.7rem]">{name}</Label>
-      <Input
-        className={clsx(
-          'w-full h-10 pl-3 rounded-lg outline-0 border',
-          options.type == 'light' ? 'bg-black/15' : 'bg-black/35',
-        )}
-        value={form[type]}
-        onChange={(e) => setForm({ ...form, [type]: e.target.value })}
-      />
+      <Label className="cm-label">{name}</Label>
+      <div className="cm-field">
+        <Input
+          className="w-full"
+          value={form[type]}
+          onChange={(e) => setForm({ ...form, [type]: e.target.value })}
+        />
+      </div>
     </Field>
   );
 };
 
 const NewQuickLink = ({ state, set, update }) => {
-  const { options } = useOptions();
   const [form, setForm] = useState({
     name: '',
     icon: '',
@@ -45,48 +41,38 @@ const NewQuickLink = ({ state, set, update }) => {
     });
     clear();
   };
-  const filled = () => {
-    if (form.name && form.link) return true;
-    else return false;
-  };
+  const filled = () => !!(form.name && form.link);
   return (
-    <>
-      <Dialog open={state} onClose={() => set(false)} className="fixed inset-0 bg-black/40 z-50">
-        <div className="flex justify-center items-center h-full">
-          <DialogPanel
-            className="w-[30rem] h-[20.8rem] p-5 rounded-xl relative flex flex-col gap-3 shadow-2xl"
-            style={{ backgroundColor: options.quickModalBgColor || '#252f3e' }}
-          >
-            <DialogTitle className="text-[1rem] mb-1">ショートカットを追加</DialogTitle>
+    <Dialog open={state} onClose={() => set(false)} className="cm-backdrop">
+      <div className="flex justify-center items-center h-full p-4">
+        <DialogPanel className="cm-dialog w-[30rem] max-w-full p-5 pt-4 gap-4">
+          <DialogTitle className="cm-title">ショートカットを追加</DialogTitle>
 
-            <FieldOption name="Name" type="name" state={[form, setForm]} />
-            <FieldOption name="URL" type="link" state={[form, setForm]} />
-            <FieldOption name="Icon URL" type="icon" state={[form, setForm]} />
+          <FieldOption name="名前" type="name" state={[form, setForm]} />
+          <FieldOption name="URL" type="link" state={[form, setForm]} />
+          <FieldOption name="アイコン URL（任意）" type="icon" state={[form, setForm]} />
 
-            <div className="absolute bottom-5 right-5 flex flex-row gap-5">
-              <Button
-                onClick={() => {
-                  set(false);
-                  clear();
-                }}
-                className="cursor-pointer duration-150 hover:opacity-80"
-              >
-                キャンセル
-              </Button>
-              <Button
-                onClick={filled() && (() => action())}
-                className={clsx(
-                  filled() ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed opacity-70',
-                  'duration-150',
-                )}
-              >
-                確定
-              </Button>
-            </div>
-          </DialogPanel>
-        </div>
-      </Dialog>
-    </>
+          <div className="flex justify-end items-center gap-2 pt-1">
+            <Button
+              onClick={() => {
+                set(false);
+                clear();
+              }}
+              className="cm-text-btn"
+            >
+              キャンセル
+            </Button>
+            <Button
+              disabled={!filled()}
+              onClick={() => filled() && action()}
+              className="cm-filled-btn"
+            >
+              追加
+            </Button>
+          </div>
+        </DialogPanel>
+      </div>
+    </Dialog>
   );
 };
 
