@@ -22,7 +22,6 @@
   display: flex;
   align-items: flex-end;
   gap: 0;
-  /* left/right room so the curved shoulders of the first/last tab are not clipped */
   padding: 0 8px 0 14px;
   overflow: hidden;
   user-select: none;
@@ -65,27 +64,6 @@
   background-color: var(--chrome-tab-active);
   color: var(--chrome-text);
   z-index: 1;
-}
-
-/* curved shoulders that flare the active tab into the toolbar */
-.chrome-tab.is-active::before,
-.chrome-tab.is-active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  width: 12px;
-  height: 12px;
-  pointer-events: none;
-}
-
-.chrome-tab.is-active::before {
-  left: -12px;
-  background: radial-gradient(circle at 100% 0, var(--chrome-tab-active) 11.5px, transparent 12px);
-}
-
-.chrome-tab.is-active::after {
-  right: -12px;
-  background: radial-gradient(circle at 0 0, var(--chrome-tab-active) 11.5px, transparent 12px);
 }
 
 /* thin vertical separator between inactive tabs */
